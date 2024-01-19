@@ -8,7 +8,7 @@ import axios from '../../api/axios';
 import Logo from "../../assets/logo192.png";
 import GroupsIcon from "@mui/icons-material/Groups";
 import PlusOne from "@mui/icons-material/PlusOne";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
+import EmailIcon from "@mui/icons-material/Email";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
@@ -35,14 +35,13 @@ const Sidebar = ({ userId }) => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Events");
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Замените URL и добавьте необходимые параметры для вашего эндпоинта
         const response = await axios.get(`http://localhost:8080/api/user/${userId}`);
-        setUserData(response.data); // Предполагается, что данные о пользователе приходят в виде объекта
+        setUserData(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -111,10 +110,7 @@ const Sidebar = ({ userId }) => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  {"userData.name"}
-                </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  {"userData.username"}
+                  {userData.username}
                 </Typography>
               </Box>
             </Box>
@@ -130,15 +126,15 @@ const Sidebar = ({ userId }) => {
             />
             <Item
               title="Создание мероприятия"
-              to="/form"
+              to="/event/create"
               icon={<PlusOne />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Календарь"
-              to="/calendar"
-              icon={<CalendarTodayOutlinedIcon />}
+              title="Приглашения"
+              to="/invitation"
+              icon={<EmailIcon />}
               selected={selected}
               setSelected={setSelected}
             />

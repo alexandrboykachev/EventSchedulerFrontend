@@ -1,43 +1,39 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Box, Button, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Logo from "../../assets/logo192.png";
-import axios from '../../api/axios';
+import { Box, Button, Typography, useTheme } from "@mui/material";
 
-const required = (value) => {
-  if (!value) {
-    return (
-      <div className="invalid-feedback d-block">
-        Это поле обязательно к заполнению!
-      </div>
-    );
-  }
-};
-
-function Login() {
+function SignUpForm() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [username, setUsername] = useState('');
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:8080/login', {
-        username,
-        password,
+      fetch('http://localhost:8080/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          login,
+          password,
+        }),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
       });
-
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.userId);
-      console.log('Успешный вход!', response.data);
-      navigate("/", { replace: true })
-
+      navigate("/login", { replace: true })
     } catch (error) {
-      console.error('Ошибка входа:', error.message);
+      console.error(error);
     }
   };
 
@@ -62,13 +58,13 @@ function Login() {
         <Box textAlign="center">
           <img alt="logo" width="92px" height="92px" src={Logo} />
           <Typography variant="h5" color={"#FFFFFF"}>
-            Sign in to MeetUp
+            Sign Up
           </Typography>
         </Box>
       </Box>
 
       <Box
-        minHeight={"30svh"}
+        minHeight={"40svh"}
         minWidth={"40svh"}
         display="flex"
         flexDirection="column"
@@ -93,12 +89,28 @@ function Login() {
             <input
               style={{ width: "100%", height: "3svh" }}
               type="text"
-              color={colors.primary[100]}
-              id="username"
-              autoComplete="off"
-              onChange={(e) => setUsername(e.target.value)}
               value={username}
-              validations={[required]}
+              onChange={(event) => setUsername(event.target.value)}
+            />
+          </Box>
+          <Box minHeight={"3svh"} minWidth={"30svh"}>
+            <p textAlign="end" style={{ color: "#000000", fontSize: 16 }}>
+              Login
+            </p>
+          </Box>
+          <Box
+            minWidth={"30svh"}
+            minHeight={"3svh"}
+            borderRadius="3px"
+            border={2}
+            borderColor={colors.primary[200]}
+          >
+            <input
+              style={{ width: "100%", height: "3svh" }}
+              type="text"
+              value={login}
+              color={colors.primary[100]}
+              onChange={(event) => setLogin(event.target.value)}
             />
           </Box>
           <Box minHeight={"3svh"} minWidth={"30svh"}>
@@ -108,44 +120,35 @@ function Login() {
           </Box>
           <Box
             minWidth={"30svh"}
+            minHeight={"3svh"}
             borderRadius="3px"
             border={2}
             borderColor={colors.primary[200]}
           >
             <input
               style={{ width: "100%", height: "3svh" }}
-              type="password"
-              id="password"
-              onChange={(e) => setPassword(e.target.value)}
               value={password}
-              validations={[required]}
+              type="password"
+              onChange={(event) => setPassword(event.target.value)}
             />
           </Box>
           <Box
             minWidth={"30svh"}
-            justify-content="center"
+            justify-content="center"	
             textAlign="center"
             paddingTop={2}
           >
-            <Button
-              style={{
-                minWidth: "100%",
-                minHeight: "100%",
-                backgroundColor: "#238636",
-              }}
-              type="submit"
-              //onClick={() => navigate("/", { replace: true })}
-            >
-              <Typography color="#FFFFFF">SIGN IN</Typography>
+            <Button style={{ minWidth: "100%", minHeight: "100%", backgroundColor: "#238636" }} type="submit">
+              <Typography color="#FFFFFF">SIGN UP</Typography>
             </Button>
           </Box>
         </form>
         <p style={{ color: "#000000", fontSize: 16 }}>
-          Don't have an account? <Link to="/register">Sign up</Link>
+          Already have an Account? <Link to="/login">Sign in</Link>
         </p>
       </Box>
     </Box>
   );
 };
 
-export default Login
+export default SignUpForm

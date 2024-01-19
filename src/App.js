@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import Register from "./scenes/signup/register";
-import Login from "./scenes/signin/Login";
-import Topbar from "./scenes/global/Topbar";
-import Sidebar from "./scenes/global/Sidebar";
-import Events from "./scenes/events";
-import EventInfo from "./scenes/eventinfo";
-import Form from "./scenes/form";
-import FAQ from "./scenes/faq";
+import Register from "./components/SingUp";
+import Login from "./components/SingIn";
+import Topbar from "./components/Global/Topbar"
+import Sidebar from "./components/Global/Sidebar";
+import Events from "./components/UserEvents";
+import EventCreate from "./components/EventCreate";
+import EventInfo from "./components/EventInfo";
+import EventUpdate from "./components/EventUpdate";
+import Invitations from "./components/Invitation";
+import FAQ from "./components/FAQ";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import Calendar from "./scenes/calendar/calendar";
-import useToken from "./components/UseToken";
+import useToken from "./utils/UseToken";
 
 function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
-  const { token, setToken } = useToken();
-
+  
+  const { token, setToken} = useToken();
   const userId = localStorage.getItem('userId');
 
   return (
@@ -31,11 +32,12 @@ function App() {
               <main className="content">
                 <Topbar setIsSidebar={setIsSidebar} />
                 <Routes>
-                  <Route path="*" element={<Events />} />
-                  <Route path="/form" element={<Form />} />
-                  <Route path="/eventinfo" element={<EventInfo />} />
+                  <Route path="*" element={<Events userId={userId} />} />
+                  <Route path="/event/create" element={<EventCreate userId={userId} />} />
+                  <Route path="/event/info" element={<EventInfo userId={userId}/>} />
+                  <Route path="/event/update" element={<EventUpdate />} />
+                  <Route path="/invitation" element={<Invitations userId={userId} />} />
                   <Route path="/faq" element={<FAQ />} />
-                  <Route path="/calendar" element={<Calendar />} />
                 </Routes>
               </main>
             </div>

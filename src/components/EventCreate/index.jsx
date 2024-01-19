@@ -1,47 +1,45 @@
 import React, {useState} from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import { Formik } from "formik";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Header from "../../components/Header";
+import Header from "../../utils/Header";
 
-
-
-const EventForm = ({ events, onCreateEvent, onJoinEvent }) => {
-  const isNonMobile = useMediaQuery("(min-width:600px)");
-
-  const [eventName, setEventName] = useState("");
+const EventCreate = ({ userId }) => {
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
-  const [venueName, setVenueName] = useState("");
-  const [address, setAddress] = useState("");
+  const [place, setPlace] = useState("");
   
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setSubmitting(true);
-
-    const eventData = {
-      eventName,
-      eventDate,
-      eventTime,
-      venueName,
-      address,
-    };
+  const handleSubmit = async ({ setSubmitting }) => {
+    try {
+      setSubmitting(true);
+    } catch (error) {
+      console.log(error);
+    }
 
     try {
-      const event = await fetch("/api/events", {
+      await fetch('http://localhost:8080/api/event/create', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({eventData}),
-      });
-
-      if (event.status === 201) {
-        alert("User created successfully");
-      } else {
-        alert("Error creating event");
-      }
+        body: JSON.stringify({ 
+          name,
+          authorId: userId,
+          date_time: eventDate + "T" + eventTime,
+          place,
+         }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        });
+        navigate("/*", { replace: true })
     } catch (error) {
       console.error(error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -49,37 +47,23 @@ const EventForm = ({ events, onCreateEvent, onJoinEvent }) => {
     <Box m="20px">
       <Header
         title="СОЗДАНИЕ МЕРОПРИЯТИЯ"
-        subtitle="Создание нового мероприятия"
+        subtitle="Форма для создания нового мероприятия"
       />
-
       <Formik
         initialValues={{
-          eventName,
-          eventDate,
-          eventTime,
-          venueName,
-          address,
-          joinEvent: false,
-          eventId: null,
+          name: "",
+          eventDate: "",
+          eventTime: "",
+          place: "",
         }}
         onSubmit={handleSubmit}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-        }) => (
+        {({ values, errors, touched, handleBlur, handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <Box
               display="grid"
               gap="30px"
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-              sx={{
-                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-              }}
             >
               <TextField
                 fullWidth
@@ -87,11 +71,11 @@ const EventForm = ({ events, onCreateEvent, onJoinEvent }) => {
                 type="text"
                 label="Название мероприятия"
                 onBlur={handleBlur}
-                onChange={(event) => setEventName(event.target.value)}
-                value={eventName}
-                name="eventName"
-                error={!!touched.eventName && !!errors.eventName}
-                helperText={touched.eventName && errors.eventName}
+                onChange={(event) => setName(event.target.value)}
+                value={name}
+                name="name"
+                error={!!touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
                 sx={{ gridColumn: "span 2" }}
               />
               <TextField
@@ -126,24 +110,11 @@ const EventForm = ({ events, onCreateEvent, onJoinEvent }) => {
                 type="text"
                 label="Название места"
                 onBlur={handleBlur}
-                onChange={(event) => setVenueName(event.target.value)}
-                value={venueName}
-                name="venueName"
-                error={!!touched.venueName && !!errors.venueName}
-                helperText={touched.venueName && errors.venueName}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Адрес"
-                onBlur={handleBlur}
-                onChange={(event) => setAddress(event.target.value)}
-                value={address}
-                name="address"
-                error={!!touched.address && !!errors.address}
-                helperText={touched.address && errors.address}
+                onChange={(event) => setPlace(event.target.value)}
+                value={place}
+                name="place"
+                error={!!touched.place && !!errors.place}
+                helperText={touched.place && errors.place}
                 sx={{ gridColumn: "span 4" }}
               />
             </Box>
@@ -159,4 +130,4 @@ const EventForm = ({ events, onCreateEvent, onJoinEvent }) => {
   );
 };
 
-export default EventForm;
+export default EventCreate;

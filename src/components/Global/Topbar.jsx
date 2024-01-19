@@ -1,22 +1,31 @@
-import { Box, IconButton, useTheme } from "@mui/material";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
+import { Box, IconButton, InputBase, useTheme } from "@mui/material";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SearchIcon from "@mui/icons-material/Search";
+import axios from '../../api/axios';
 
-const Topbar = () => {
+const Topbar = ({userId}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const navigate = useNavigate();
   const colorMode = useContext(ColorModeContext);
+  const navigate = useNavigate();
+  const [events, setEvents] = useState([]);
+
+  try {
+    const response = axios.get(`http://localhost:8080/api/event/name/${userId}`);
+    setEvents(response.data);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+  }
 
   const logout = () => {
-    localStorage.removeItem('token');
-};
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+  };
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
