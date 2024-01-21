@@ -3,6 +3,7 @@ import { Box, IconButton, useTheme, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
 import Header from "../../utils/Header";
+import formatDate from "../../utils/FormatDate";
 import AcceptIcon from "@mui/icons-material/Check";
 import RefuseIcon from "@mui/icons-material/Close";
 import axios from '../../api/axios';
@@ -12,11 +13,6 @@ const Invitations = ({userId}) => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const [invitations, setInvitations] = useState([]);
-
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric"}
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
   
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -26,7 +22,7 @@ const Invitations = ({userId}) => {
         );
         setInvitations(response.data);
       } catch (error) {
-        console.error("Error fetching invitations:", error);
+        console.error('Ошибка загрузки данных:', error);
       }
     };
     if (userId) {
@@ -39,7 +35,7 @@ const Invitations = ({userId}) => {
       await axios.patch(`http://localhost:8080/api/invitation/${id}/accept`);
       window.location.reload();
     } catch (error) {
-      console.error("Ошибка при приеме приглашения:", error);
+      console.error('Ошибка при приеме приглашения:', error);
     }
   }
 
@@ -48,7 +44,7 @@ const Invitations = ({userId}) => {
       await axios.patch(`http://localhost:8080/api/invitation/${id}/refuse`);
       window.location.reload();
     } catch (error) {
-      console.error("Ошибка при отказе от приглашения:", error);
+      console.error('Ошибка при отказе от приглашения:', error);
     }
   }
 

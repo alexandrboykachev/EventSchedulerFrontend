@@ -1,17 +1,19 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import Header from "../../utils/Header";
 import axios from '../../api/axios';
 
 const EventUpdate = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  let eventId = location.state.eventId;
   const [name, setName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [place, setPlace] = useState("");
+
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  let eventId = location.state.eventId;
 
   useEffect(() => {
     const fetchEventData = async () => {

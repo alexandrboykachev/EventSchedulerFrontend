@@ -18,7 +18,7 @@ function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   
-  const { token, setToken} = useToken();
+  const { token, setToken } = useToken();
   const userId = localStorage.getItem('userId');
 
   return (

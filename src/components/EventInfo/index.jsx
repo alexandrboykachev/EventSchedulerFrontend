@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Box, Button, TextField } from "@mui/material";
 import Header from "../../utils/Header";
-import { useLocation, useNavigate } from "react-router-dom";
+import formatDate from "../../utils/FormatDate";
 import axios from '../../api/axios';
 
 const EventInfo = ({userId}) => {
@@ -10,20 +11,6 @@ const EventInfo = ({userId}) => {
 
   const location = useLocation();
   let eventId = location.state.eventId;
-
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric"}
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
-
-  const leave = async () => {
-    try {
-      await axios.patch(`http://localhost:8080/api/event/${eventId}/${userId}/leave`);
-      navigate("/", { replace: true })
-    } catch (error) {
-      console.error('Ошибка при попытке покинуть мероприятие ', error.message);
-    }
-  }
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -40,6 +27,15 @@ const EventInfo = ({userId}) => {
       fetchEventData();
     }
   }, [eventId]);
+
+  const leave = async () => {
+    try {
+      await axios.patch(`http://localhost:8080/api/event/${eventId}/${userId}/leave`);
+      navigate("/", { replace: true })
+    } catch (error) {
+      console.error('Ошибка при попытке покинуть мероприятие: ', error.message);
+    }
+  }
 
   return (
     <Box m="20px">
